@@ -1,116 +1,114 @@
-import "./index.css";
-import "./App.css";
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
 
-export default function App() {
-  const data = [
-    {
-      id: 1,
-      name: "Peter",
-      sex: "Male",
-    },
-    {
-      id: 2,
-      name: "Alice",
-      sex: "Female",
-    },
-  ];
-  return (
-    <div className="flex flex-col items-center w-screen">
-      <NavBar> </NavBar>
-      <span className="mt-10"></span>
-      <Table1 className="w-1/2"></Table1>
-      {/* <Table list={data} pageCount={10} headers={("id", "name", "sex")} /> */}
-    </div>
-  );
-}
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
 
-function NavBar() {
-  return (
-    <nav className="bg-white shadow w-full">
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-        <div className="relative flex justify-between h-16">
-          <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-            <div className="flex-shrink-0 flex items-center">
-              <h1 className="text-lg leading-6 font-medium text-gray-900">
-                CSV Table
-              </h1>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
-}
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
 
-const people = [
-  {
-    name: "Jane Cooper",
-    title: "Regional Paradigm Technician",
-    role: "Admin",
-    email: "jane.cooper@example.com",
+const axios = require("axios");
+
+const useStyles = makeStyles((theme) => ({
+  table: {
+    minWidth: 650,
   },
-];
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));
 
-function Table1() {
+export default function BasicTable() {
+  function componentDidMount() {
+    this.setState({});
+  }
+
+  var rows = [
+    { name: "aa", Notes: "1" },
+    { name: "bb", Notes: "1" },
+    { name: "cc", Notes: "1" },
+    { name: "dd", Notes: "1" },
+    { name: "ee", Notes: "1" },
+  ];
+
+  async function fetchCsv(value) {
+    console.log(value);
+    await axios
+      .get("http://localhost:4000/csv/" + value)
+      .then(function (response) {
+        console.log(response.data);
+        rows = response.data;
+      });
+    componentDidMount();
+    return true;
+  }
+
+  const classes = useStyles();
+  const [age, setAge] = React.useState("");
+
+  var flag = 0;
+  const handleChange = async (event) => {
+    setAge(event.target.value);
+    await fetchCsv(event.target.value);
+    if (flag === 0) {
+      flag = 1;
+      handleChange(event);
+    }
+  };
+
   return (
-    <div className="flex flex-col w-1/2">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Name
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Title
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Email
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Role
-                  </th>
-                  {/* <th scope="col" className="relative px-6 py-3">
-                    <span className="sr-only">Edit</span>
-                  </th> */}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {people.map((person) => (
-                  <tr key={person.email}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {person.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {person.title}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {person.email}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {person.role}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    <div>
+      <FormControl className={classes.formControl}>
+        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={age}
+          onChange={handleChange}
+        >
+          <MenuItem value={"raw_data1"}>CSV 1</MenuItem>
+          <MenuItem value={"raw_data2"}>CSV 2</MenuItem>
+          <MenuItem value={"raw_data3"}>CSV 3</MenuItem>
+        </Select>
+      </FormControl>
+
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Dessert (100g serving)</TableCell>
+              <TableCell align="right">Calories</TableCell>
+              <TableCell align="right">Fat&nbsp;(g)</TableCell>
+              <TableCell align="right">Carbs&nbsp;(g)</TableCell>
+              <TableCell align="right">Protein&nbsp;(g)</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={row.name}>
+                <TableCell component="th" scope="row">
+                  {row.name}
+                </TableCell>
+                <TableCell align="right">{row.Notes}</TableCell>
+                <TableCell align="right">{row.Notes}</TableCell>
+                <TableCell align="right">{row.Notes}</TableCell>
+                <TableCell align="right">{row.Notes}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }

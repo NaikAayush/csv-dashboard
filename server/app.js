@@ -1,3 +1,4 @@
+var cors = require("cors");
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -13,6 +14,11 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
 app.use(logger("dev"));
+const allowedOrigins = ["http://localhost:3000", "http://localhost:4000"];
+const options = {
+  origin: allowedOrigins,
+};
+app.use(cors(options));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
